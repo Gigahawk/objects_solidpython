@@ -2,9 +2,9 @@ import sys
 
 import numpy as np
 
-from solid import scad_render_to_file
+from solid import scad_render_to_file, linear_extrude, rotate
 from solid.objects import cylinder
-from solid.utils import extrude_along_path
+from solid.utils import extrude_along_path, arc
 
 from euclid3 import Point2, Point3, Vector3
 
@@ -90,8 +90,20 @@ def assembly():
     circle = circle_points(tube_rad, 100)
     path = helix_points
     helix = extrude_along_path(circle, path)
-    cyl = cylinder(r=radius, h=cyl_height)
-    return cyl - helix
+
+    main_cyl = cylinder(r=radius + pitch, h=cyl_height)
+
+    cut_cyl = (
+        cylinder(r=radius + pitch, h=cyl_height)
+        - cylinder(r=radius - pitch, h=cyl_height)
+    )
+    cut_arc = linear_extrude(cyl_height)(
+        arc(rad=radius + pitch, start_degrees=0, end_degrees=45)
+    )
+    for i in range(4):
+        cut_cyl -= rotate(i*90)(cut_arc)
+
+    return main_cyl - cut_cyl - helix
 
 if __name__ == '__main__':
     out_dir = sys.argv[1] if len(sys.argv) > 1 else None
