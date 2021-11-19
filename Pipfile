@@ -5,13 +5,14 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+euclid3 = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.9"
-
 # Current stable release of SolidPython has issues with extrude_along_path()
+
 [packages.solidpython]
 git = "https://github.com/SolidCode/SolidPython.git"
 ref = "37417daac6397e7fdeab511136567536840f782a"
