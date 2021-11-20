@@ -28,7 +28,7 @@ radius = 100
 
 # Tube geometry
 tube_rad = tube_rads[0]
-tube_len = 20000
+tube_len = 4200
 
 # Extra tube length leading into and out of spiral
 tube_extra = radius*2

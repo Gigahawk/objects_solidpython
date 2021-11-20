@@ -24,3 +24,10 @@ jobs:
         with:
           entrypoint: ./export_stl.sh
 
+      - name: Archive files
+        # Skip archive if running on act
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: exports
+          path: export
