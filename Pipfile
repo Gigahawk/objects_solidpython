@@ -3,6 +3,9 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[scripts]
+export_scad = "python export_scad.py"
+
 [packages]
 numpy = "*"
 euclid3 = "*"

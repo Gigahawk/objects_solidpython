@@ -1,0 +1,26 @@
+name: main
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        uses: VaultVulp/action-pipenv@v2.0.1
+        with:
+          command: install
+
+
+      - name: Building SCAD files
+        uses: VaultVulp/action-pipenv@v2.0.1
+        with:
+          command: run export_scad
+
+      - name: Building STL files
+        uses: pkoehlers/openscad-build-action@v1
+        with:
+          entrypoint: ./export_stl.sh
+
