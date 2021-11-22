@@ -176,7 +176,7 @@ def assemblies():
     )
     a = []
     for i in range(sections):
-        _a = rotate(i*comb_angle)(intersect_arc*main_cyl)
+        _a = main_cyl*rotate(i*comb_angle)(intersect_arc)
         if i % 2:
             _a *= cylinder(r=radius - pitch, h=cyl_height)
         a.append(_a)
