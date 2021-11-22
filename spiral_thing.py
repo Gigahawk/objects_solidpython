@@ -27,7 +27,7 @@ tube_rads = [r + 0.25 for r in nom_tube_rad_mm]
 radius = 100
 
 # Tube geometry
-tube_rad = tube_rads[0]
+tube_rad = tube_rads[1]
 tube_len = 4200
 
 # Extra tube length leading into and out of spiral
@@ -38,7 +38,7 @@ dowel_rad = 3
 dowel_len = 30
 
 # Number of tube holding combs
-num_combs = 4
+num_combs = 8
 
 def circle_points(rad, num_points):
     angles = np.linspace(0, 2*np.pi, num_points)
@@ -142,17 +142,6 @@ def assemblies():
     # Cut helix out of main cylinder
     main_cyl -= translate([0, 0, helix_offset])(helix)
 
-    # Calculate the comb geometry and cut out of main cylinder
-    comb_cut_cyl = (
-        cylinder(r=radius + pitch, h=cyl_height)
-        - cylinder(r=radius - pitch, h=cyl_height)
-    )
-    comb_cut_arc = linear_extrude(cyl_height)(
-        arc(rad=radius + pitch, start_degrees=0, end_degrees=comb_angle)
-    )
-    for i in range(num_combs):
-        comb_cut_cyl -= rotate(i*comb_offset_degrees)(comb_cut_arc)
-    main_cyl -= comb_cut_cyl
 
     # Calculate core cutout geometry and cut out of main cylinder
     core_cyl = cylinder(r=radius - 4*pitch, h=cyl_height)
@@ -169,6 +158,17 @@ def assemblies():
             + translate([0, 0, cyl_height - 2*dowel_rad])(_d)
         )
 
+    ## Calculate the comb geometry and cut out of main cylinder
+    #comb_cut_cyl = (
+    #    cylinder(r=radius + pitch, h=cyl_height)
+    #    - cylinder(r=radius - pitch, h=cyl_height)
+    #)
+    #comb_cut_arc = linear_extrude(cyl_height)(
+    #    arc(rad=radius + pitch, start_degrees=0, end_degrees=comb_angle)
+    #)
+    #for i in range(num_combs):
+    #    comb_cut_cyl -= rotate(i*comb_offset_degrees)(comb_cut_arc)
+    #main_cyl -= comb_cut_cyl
 
     # Split main cylinder into smaller parts for printing
     intersect_arc = linear_extrude(cyl_height)(
@@ -176,9 +176,11 @@ def assemblies():
     )
     a = []
     for i in range(sections):
-        a.append(
-            rotate(i*comb_angle)(intersect_arc*main_cyl)
-        )
+        _a = rotate(i*comb_angle)(intersect_arc*main_cyl)
+        if i % 2:
+            _a *= cylinder(r=radius - pitch, h=cyl_height)
+        a.append(_a)
+
     return a
     #return [main_cyl]
 
